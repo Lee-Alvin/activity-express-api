@@ -1,8 +1,10 @@
 const express = require("express");
+const dotenv = require("dotenv");
+
 const routes = express.Router();
 const { check, validationResult } = require("express-validator");
 
-const util = require("../util.js");
+const util = require("../utils/util.js");
 const userController = require("../db/userController.js");
 const thresholds = require("../utils/thresholds.js");
 
@@ -22,7 +24,7 @@ routes.get("/activity", async (req, res) => {
 
 		res.status(200).json(response);
 	} catch (err) {
-		res.status(500).json(err);
+		res.status(err.status).json(err);
 	}
 });
 
@@ -35,12 +37,16 @@ routes.post(
 	],
 	async (req, res) => {
 		try {
+			//simple incoming request validation. returns 422 and errors if failed
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
 				return res.status(422).jsonp(errors.array());
 			}
 
+			//saves current user to activity database and user collection
 			userController.insertUser(req.body);
+
+			//build query string to call API based on user's price and accessbility
 			boredAPIQueries = util.queryBuilder(req.body);
 
 			let response = await util.buildAndCall(
@@ -51,7 +57,7 @@ routes.post(
 
 			res.status(200).json(response);
 		} catch (err) {
-			res.status(500).json(err);
+			res.status(err.status).json(err);
 		}
 	}
 );
