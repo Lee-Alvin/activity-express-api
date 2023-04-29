@@ -1,0 +1,41 @@
+version: '3'
+services:
+  bored-api-express:
+    container_name: bored-api-express
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb-bored-api-express  
+    networks:
+      - app-network
+  mongodb-bored-api-express:
+    container_name: mongodb-bored-api-express
+    image: mongo
+    restart: always
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+  nginx-bored-api-express:
+    container_name: nginx-bored-api-express
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - bored-api-express
+    networks:
+      - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+  data-volume:
+
+
