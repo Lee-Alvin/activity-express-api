@@ -34,6 +34,12 @@ Any subsequent GET requests made through the /activity endpoint will automatical
 
 ## Running and Testing Locally:
 
+Run tests using below:
+
+```
+    npm test
+```
+
 To run and the application locally, you will need Docker installed. Navigate to the root and run below to build the image and run:
 
 ```
